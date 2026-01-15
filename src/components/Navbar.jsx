@@ -61,7 +61,7 @@ const Navbar = ({ isAdmin = false }) => {
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 active:bg-red-700"
+                      className="bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 active:bg-red-700 dark:active:bg-red-800"
                       aria-label="Logout"
                     >
                       Logout
@@ -71,13 +71,13 @@ const Navbar = ({ isAdmin = false }) => {
                   <>
                     <Link
                       to="/admin/dashboard"
-                      className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       Dashboard
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 active:bg-red-700"
+                      className="bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 active:bg-red-700 dark:active:bg-red-800"
                       aria-label="Logout"
                     >
                       Logout
@@ -117,20 +117,20 @@ const Navbar = ({ isAdmin = false }) => {
                     </Link>
                     <Link
                       to="/register"
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500 active:bg-indigo-800"
+                      className="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500 active:bg-indigo-800 dark:active:bg-indigo-700"
                     >
                       Register
                     </Link>
-                    <div className="hidden sm:flex items-center space-x-2 ml-4 pl-4 border-l border-gray-300">
+                    <div className="hidden sm:flex items-center space-x-2 ml-4 pl-4 border-l border-gray-300 dark:border-gray-600">
                       <Link
                         to="/admin/register"
-                        className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-md text-sm font-medium transition shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 active:bg-purple-800"
+                        className="bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 dark:hover:bg-purple-600 text-white px-3 py-2 rounded-md text-sm font-medium transition shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 active:bg-purple-800 dark:active:bg-purple-700"
                       >
                         Admin Signup
                       </Link>
                       <Link
                         to="/login?type=admin"
-                        className="bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-2 rounded-md text-sm font-medium transition shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 active:bg-indigo-900"
+                        className="bg-indigo-700 dark:bg-indigo-600 hover:bg-indigo-800 dark:hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium transition shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 active:bg-indigo-900 dark:active:bg-indigo-800"
                       >
                         Admin Login
                       </Link>

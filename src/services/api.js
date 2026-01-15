@@ -1,15 +1,36 @@
 import axios from 'axios';
+import { getErrorMessage } from '../utils/errorHandler.js';
+
+/**
+ * API Service
+ * 
+ * Centralized API service for handling all backend communication.
+ * Uses mock data for development. Replace with actual backend URLs in production.
+ */
 
 // Mock API base URL - replace with actual backend URL when integrating
 const API_BASE_URL = 'http://localhost:3001/api';
 
-// Create axios instance
+// Create axios instance with error handling
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Add response interceptor for standardized error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Transform error to have consistent structure
+    const message = getErrorMessage(error, 'An unexpected error occurred');
+    const enhancedError = new Error(message);
+    enhancedError.originalError = error;
+    enhancedError.response = error.response;
+    return Promise.reject(enhancedError);
+  }
+);
 
 // Mock data storage (in real app, this would be on the backend)
 let mockPolls = [

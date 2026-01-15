@@ -155,12 +155,12 @@ const PollResults = () => {
 
   if (loading && !poll) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={authAPI.isAdmin()} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-            <p className="mt-4 text-gray-600">Loading results...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading results...</p>
           </div>
         </div>
       </div>
@@ -169,12 +169,12 @@ const PollResults = () => {
 
   if (error && !poll) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={authAPI.isAdmin()} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card>
             <div className="text-center">
-              <div className="text-red-600 mb-4">{error}</div>
+              <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>
               <Button onClick={() => navigate('/')} variant="primary">
                 Go Home
               </Button>
@@ -192,17 +192,17 @@ const PollResults = () => {
   const chartData = getChartData();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar isAdmin={authAPI.isAdmin()} />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card>
           <div className="mb-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {poll.question}
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   {expired ? (
                     <span className="text-red-600 font-semibold">Poll Closed</span>
                   ) : (
@@ -291,8 +291,8 @@ const PollResults = () => {
                   d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No votes yet</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No votes yet</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Be the first to vote on this poll!
               </p>
               <div className="mt-6">
@@ -316,7 +316,7 @@ const PollResults = () => {
 
               {/* Results List */}
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Detailed Results
                 </h2>
                 {poll.options
@@ -333,13 +333,13 @@ const PollResults = () => {
                         key={option.id}
                         className={`border rounded-md p-4 ${
                           isWinner
-                            ? 'border-green-300 bg-green-50'
-                            : 'border-gray-200 bg-white'
+                            ? 'border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/30'
+                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
                         }`}
                       >
                         <div className="flex justify-between items-center mb-2">
                           <div className="flex items-center space-x-2">
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-gray-900 dark:text-white">
                               {index + 1}. {option.text}
                             </span>
                             {isWinner && (

@@ -90,7 +90,7 @@ const AdminVotingOverview = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
@@ -104,7 +104,7 @@ const AdminVotingOverview = () => {
 
   if (error && polls.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card>
@@ -124,7 +124,7 @@ const AdminVotingOverview = () => {
   const votesByUser = getVotesByUser();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar isAdmin={true} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-6">
@@ -135,8 +135,8 @@ const AdminVotingOverview = () => {
           </Link>
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Voting Overview</h1>
-              <p className="text-gray-600">Complete voting information across all polls</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Voting Overview</h1>
+              <p className="text-gray-600 dark:text-gray-300">Complete voting information across all polls</p>
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -191,13 +191,13 @@ const AdminVotingOverview = () => {
                     <div className="mb-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1">
-                          <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
                             {poll.question}
                           </h2>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
                             <span>Created: {formatDate(poll.createdAt)}</span>
                             <span>Deadline: {formatDate(poll.deadline)}</span>
-                            <span className="font-semibold text-indigo-600">
+                            <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                               {pollVotes.length} vote{pollVotes.length !== 1 ? 's' : ''}
                             </span>
                           </div>
@@ -242,10 +242,10 @@ const AdminVotingOverview = () => {
                                     <p className="text-sm text-gray-500">@{vote.username}</p>
                                   </div>
                                   <div className="text-right">
-                                    <p className="text-sm font-medium text-gray-900">
-                                      Voted for: <span className="text-indigo-600">{option?.text || vote.optionText}</span>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                      Voted for: <span className="text-indigo-600 dark:text-indigo-400">{option?.text || vote.optionText}</span>
                                     </p>
-                                    <p className="text-xs text-gray-500">{formatDate(vote.votedAt)}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(vote.votedAt)}</p>
                                   </div>
                                 </div>
                               </div>
@@ -280,10 +280,10 @@ const AdminVotingOverview = () => {
                           </span>
                         </div>
                         <div>
-                          <h2 className="text-xl font-semibold text-gray-900">
+                          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                             {userData.name || userData.username}
                           </h2>
-                          <p className="text-sm text-gray-500">@{userData.username}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">@{userData.username}</p>
                         </div>
                         <div className="ml-auto">
                           <span className="px-3 py-1 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-800">
@@ -305,13 +305,13 @@ const AdminVotingOverview = () => {
                             >
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
-                                  <p className="font-medium text-gray-900 mb-1">
+                                  <p className="font-medium text-gray-900 dark:text-white mb-1">
                                     {vote.pollQuestion}
                                   </p>
-                                  <p className="text-sm text-gray-600 mb-2">
-                                    Voted for: <span className="font-semibold text-indigo-600">{vote.optionText}</span>
+                                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                                    Voted for: <span className="font-semibold text-indigo-600 dark:text-indigo-400">{vote.optionText}</span>
                                   </p>
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     {formatDate(vote.votedAt)}
                                   </p>
                                 </div>

@@ -99,13 +99,13 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar isAdmin={true} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900" tabIndex={-1}>Admin Dashboard</h1>
-            <p className="mt-2 text-gray-600">Manage and monitor your polls</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white" tabIndex={-1}>Admin Dashboard</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">Manage and monitor your polls</p>
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
             <Link to="/admin/voting-overview" className="w-full sm:w-auto">
@@ -200,15 +200,15 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2">
                   {poll.question}
                 </h3>
 
                 <div className="space-y-2 mb-4">
                   {poll.options.slice(0, 2).map((option) => (
                     <div key={option.id} className="flex justify-between text-sm">
-                      <span className="text-gray-600 truncate">{option.text}</span>
-                      <span className="text-gray-900 font-medium">{option.votes} votes</span>
+                      <span className="text-gray-600 dark:text-gray-300 truncate">{option.text}</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{option.votes} votes</span>
                     </div>
                   ))}
                   {poll.options.length > 2 && (
@@ -220,14 +220,14 @@ const AdminDashboard = () => {
 
                 <div className="border-t pt-4 mt-4">
                   <div className="flex justify-between items-center text-sm mb-4">
-                    <span className="text-gray-600">Total Votes:</span>
-                    <span className="font-semibold text-indigo-600">
+                    <span className="text-gray-600 dark:text-gray-300">Total Votes:</span>
+                    <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                       {getTotalVotes(poll)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm mb-4">
-                    <span className="text-gray-600">Deadline:</span>
-                    <span className="text-gray-900">
+                    <span className="text-gray-600 dark:text-gray-300">Deadline:</span>
+                    <span className="text-gray-900 dark:text-white">
                       {isPastDeadline(poll.deadline) ? (
                         <span className="text-red-600">Expired</span>
                       ) : (

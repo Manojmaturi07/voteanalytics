@@ -108,7 +108,7 @@ const PollVoting = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <LoadingSpinner size="lg" text="Loading poll..." ariaLabel="Loading poll data" />
@@ -119,7 +119,7 @@ const PollVoting = () => {
 
   if (error && !poll) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card>
@@ -140,17 +140,17 @@ const PollVoting = () => {
   const expired = isPastDeadline(poll.deadline);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card>
           <div className="mb-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2" tabIndex={-1}>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" tabIndex={-1}>
                   {poll.question}
                 </h1>
-                <p className="text-gray-600" aria-live="polite">
+                <p className="text-gray-600 dark:text-gray-300" aria-live="polite">
                   Deadline: {formatDate(poll.deadline)}
                 </p>
               </div>
@@ -214,8 +214,8 @@ const PollVoting = () => {
                   return (
                     <div key={option.id} className="border border-gray-200 rounded-md p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-gray-900">{option.text}</span>
-                        <span className="text-sm text-gray-600">
+                        <span className="font-medium text-gray-900 dark:text-white">{option.text}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
                           {option.votes} vote{option.votes !== 1 ? 's' : ''} ({percentage}%)
                         </span>
                       </div>
@@ -284,7 +284,7 @@ const PollVoting = () => {
                           </svg>
                         )}
                       </div>
-                      <span className="text-gray-900 font-medium">{option.text}</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{option.text}</span>
                     </div>
                   </button>
                 ))}

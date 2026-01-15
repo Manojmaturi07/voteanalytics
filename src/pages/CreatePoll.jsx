@@ -135,12 +135,12 @@ const CreatePoll = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar isAdmin={true} />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900" tabIndex={-1}>Create New Poll</h1>
-          <p className="mt-2 text-gray-600">Set up a new voting poll for your audience</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white" tabIndex={-1}>Create New Poll</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Set up a new voting poll for your audience</p>
         </div>
 
         <Card>

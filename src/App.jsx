@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ThemeProvider } from './contexts/ThemeContext.jsx';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import UserRegistration from './pages/UserRegistration.jsx';
@@ -35,23 +35,31 @@ const UserProtectedRoute = ({ children }) => {
   return children;
 };
 
+// ToastContainer wrapper that uses theme from context
+const ThemedToastContainer = () => {
+  const { theme } = useTheme();
+  return (
+    <ToastContainer 
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={true}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme={theme === 'dark' ? 'dark' : 'light'}
+      limit={3}
+    />
+  );
+};
+
 function App() {
   return (
     <ThemeProvider>
       <Router>
-        <ToastContainer 
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          limit={3}
-        />
+        <ThemedToastContainer />
         <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

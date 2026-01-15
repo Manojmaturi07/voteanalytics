@@ -46,7 +46,7 @@ const PollVotingDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
@@ -60,7 +60,7 @@ const PollVotingDetails = () => {
 
   if (error && !poll) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card>
@@ -79,7 +79,7 @@ const PollVotingDetails = () => {
   if (!poll) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar isAdmin={true} />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-6">
@@ -119,8 +119,8 @@ const PollVotingDetails = () => {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No votes yet</h3>
-              <p className="mt-1 text-sm text-gray-500">No users have voted on this poll yet.</p>
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No votes yet</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">No users have voted on this poll yet.</p>
             </div>
           </Card>
         ) : (
@@ -133,10 +133,10 @@ const PollVotingDetails = () => {
                 <Card key={option.id}>
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">{option.text}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{option.text}</h3>
                       <div className="text-right">
-                        <span className="text-2xl font-bold text-indigo-600">{optionVotes.length}</span>
-                        <span className="text-sm text-gray-600 ml-2">
+                        <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{optionVotes.length}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300 ml-2">
                           vote{optionVotes.length !== 1 ? 's' : ''} ({percentage}%)
                         </span>
                       </div>
@@ -167,10 +167,10 @@ const PollVotingDetails = () => {
                                 </span>
                               </div>
                               <div>
-                                <p className="font-medium text-gray-900">
+                                <p className="font-medium text-gray-900 dark:text-white">
                                   {vote.name || vote.username}
                                 </p>
-                                <p className="text-sm text-gray-500">@{vote.username}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">@{vote.username}</p>
                               </div>
                             </div>
                             <div className="text-right">

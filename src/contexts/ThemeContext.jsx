@@ -23,16 +23,20 @@ export const ThemeProvider = ({ children }) => {
     }
   });
 
+  // Apply theme on mount and whenever it changes
   useEffect(() => {
     try {
       // Save theme to localStorage whenever it changes
       localStorage.setItem('theme', theme);
       
-      // Apply theme class to document root
+      // Apply theme class to document root (html element)
+      const root = document.documentElement;
       if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
+        root.classList.add('dark');
+        root.style.colorScheme = 'dark';
       } else {
-        document.documentElement.classList.remove('dark');
+        root.classList.remove('dark');
+        root.style.colorScheme = 'light';
       }
     } catch (err) {
       console.warn('Failed to save theme to localStorage:', err);
