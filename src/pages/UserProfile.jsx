@@ -1,0 +1,217 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../services/api.js';
+import Navbar from '../components/Navbar.jsx';
+import Card from '../components/Card.jsx';
+import Button from '../components/Button.jsx';
+import LoadingSpinner from '../components/LoadingSpinner.jsx';
+import { showToast } from '../utils/toastConfig.js';
+
+const UserProfile = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    username: '',
+  });
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Check if user is logged in
+    if (!authAPI.isUser()) {
+      navigate('/login?type=user');
+      return;
+    }
+
+    loadProfile();
+  }, [navigate]);
+
+  const loadProfile = async () => {
+    try {
+      setLoading(true);
+      const currentUser = authAPI.getCurrentUser();
+      
+      if (currentUser) {
+        setFormData({
+          name: currentUser.name || '',
+          email: currentUser.email || '',
+          username: currentUser.username || '',
+        });
+      }
+    } catch (err) {
+      setError('Failed to load profile. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSaving(true);
+
+    // Validation
+    if (!formData.name.trim()) {
+      setError('Name is required');
+      showToast.warning('Name is required');
+      setSaving(false);
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setError('Email is required');
+      showToast.warning('Email is required');
+      setSaving(false);
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      showToast.warning('Please enter a valid email address');
+      setSaving(false);
+      return;
+    }
+
+    try {
+      await authAPI.updateProfile(formData);
+      showToast.success('Profile updated successfully!');
+      // Reload profile to get updated data
+      await loadProfile();
+    } catch (err) {
+      const errorMsg = err.message || 'Failed to update profile. Please try again.';
+      setError(errorMsg);
+      showToast.error(errorMsg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <LoadingSpinner size="lg" text="Loading profile..." ariaLabel="Loading user profile" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Navbar />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" tabIndex={-1}>
+            My Profile
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            View and edit your profile information
+          </p>
+        </div>
+
+        <Card>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-md flex items-start" role="alert">
+                <svg className="h-5 w-5 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                disabled
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                aria-label="Username (cannot be changed)"
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Username cannot be changed
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Full Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                aria-label="Full name"
+                aria-required="true"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Email Address <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                aria-label="Email address"
+                aria-required="true"
+              />
+            </div>
+
+            <div className="flex space-x-4 pt-4">
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={saving}
+                className="flex-1"
+                aria-busy={saving}
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/polls')}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default UserProfile;
+
