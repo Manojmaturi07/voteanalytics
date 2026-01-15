@@ -10,86 +10,26 @@
  */
 const ENABLE_CONFETTI = false; // Set to true to enable confetti animations
 
-let confetti = null;
-
-// Safely import confetti only if enabled
-if (ENABLE_CONFETTI) {
-  try {
-    // Dynamic import to avoid breaking if package is not installed
-    import('confetti').then((confettiModule) => {
-      confetti = confettiModule.default || confettiModule;
-    }).catch((err) => {
-      console.warn('Confetti package not available. Install with: npm install confetti');
-    });
-  } catch (err) {
-    console.warn('Confetti import failed:', err);
-  }
-}
-
 export const triggerConfetti = (options = {}) => {
-  if (!ENABLE_CONFETTI || !confetti) {
-    return; // Silently fail if disabled or not available
-  }
-  
-  try {
-    const defaultOptions = {
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      ...options,
-    };
-    confetti(defaultOptions);
-  } catch (err) {
-    console.warn('Confetti animation failed:', err);
+  // Confetti is currently disabled and the external dependency has been
+  // removed from the build to avoid bundling server‑only code (node-fetch).
+  // If you want real confetti animations in the future, you can:
+  // 1) Add a browser‑safe library such as "canvas-confetti"
+  // 2) Wire it up here, making sure it only runs in the browser.
+  if (!ENABLE_CONFETTI) {
+    return; // Silently no-op while feature is disabled
   }
 };
 
 export const triggerBurstConfetti = () => {
-  if (!ENABLE_CONFETTI || !confetti) {
-    return; // Silently fail if disabled or not available
-  }
-  
-  try {
-    triggerConfetti({
-      particleCount: 150,
-      spread: 100,
-    });
-
-    // Secondary burst after a short delay
-    setTimeout(() => {
-      triggerConfetti({
-        particleCount: 80,
-        spread: 80,
-      });
-    }, 250);
-  } catch (err) {
-    console.warn('Confetti burst failed:', err);
+  if (!ENABLE_CONFETTI) {
+    return; // Feature currently disabled
   }
 };
 
 export const triggerSideConfetti = () => {
-  if (!ENABLE_CONFETTI || !confetti) {
-    return; // Silently fail if disabled or not available
-  }
-  
-  try {
-    // Left side
-    confetti({
-      particleCount: 50,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 },
-    });
-
-    // Right side
-    confetti({
-      particleCount: 50,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1 },
-    });
-  } catch (err) {
-    console.warn('Confetti side animation failed:', err);
+  if (!ENABLE_CONFETTI) {
+    return; // Feature currently disabled
   }
 };
 
