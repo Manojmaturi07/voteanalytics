@@ -1,0 +1,165 @@
+/* 
+ * Accessibility Improvements
+ * WCAG 2.1 AA Compliance
+ */
+
+/* Skip to main content link - visible on focus only */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Enhanced focus indicators for better visibility */
+:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Focus indicators for form inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Dark mode focus indicators */
+@media (prefers-color-scheme: dark) {
+  :focus-visible {
+    outline-color: #818cf8;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline-color: #818cf8;
+  }
+}
+
+/* Improved color contrast for links */
+a {
+  text-decoration: underline;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Better focus state for buttons */
+button:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Visible hover state for touchscreen users */
+@media (hover: none) and (pointer: coarse) {
+  button:active,
+  a:active {
+    background-color: rgba(79, 70, 229, 0.1);
+  }
+}
+
+/* Ensure proper text sizing for readability */
+body {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  button,
+  a {
+    border: 2px solid currentColor;
+  }
+
+  input,
+  textarea,
+  select {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Color blindness friendly focus colors */
+@supports (color: #0084ff) {
+  :focus-visible {
+    outline-color: #0084ff;
+  }
+
+  button:focus-visible {
+    outline-color: #0084ff;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline-color: #0084ff;
+  }
+}
+
+/* Ensure proper text contrast in form errors */
+.error-message {
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-left: 4px solid #b91c1c;
+  padding: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error-message {
+    color: #fca5a5;
+    background-color: #7f1d1d;
+  }
+}
+
+/* Improved focus trap for modals */
+.modal-focus-trap:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Ensure form labels are properly associated */
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Better spacing for keyboard navigation clarity */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  input:focus,
+  textarea:focus,
+  select:focus,
+  button:focus {
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+  }
+}

@@ -11,6 +11,7 @@ const UserRegistration = () => {
     password: '',
     confirmPassword: '',
     name: '',
+    age: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,8 +31,21 @@ const UserRegistration = () => {
     setLoading(true);
 
     // Validation
-    if (!formData.username.trim() || !formData.email.trim() || !formData.password.trim() || !formData.name.trim()) {
+    if (!formData.username.trim() || !formData.email.trim() || !formData.password.trim() || !formData.name.trim() || !formData.age) {
       setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    const age = parseInt(formData.age, 10);
+    if (isNaN(age) || age < 13) {
+      setError('You must be at least 13 years old to register');
+      setLoading(false);
+      return;
+    }
+
+    if (age > 120) {
+      setError('Please enter a valid age');
       setLoading(false);
       return;
     }
@@ -85,16 +99,21 @@ const UserRegistration = () => {
           <p className="text-gray-600">Create User Account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div 
+              className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md"
+              role="alert"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name <span className="text-red-500">*</span>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Full Name <span className="text-red-500" aria-label="required">*</span>
             </label>
             <input
               type="text"
@@ -102,15 +121,18 @@ const UserRegistration = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
               placeholder="Enter your full name"
+              aria-describedby="name-help"
+              aria-required="true"
               required
             />
+            <p id="name-help" className="text-xs text-gray-500 dark:text-gray-400 mt-1">Your first and last name</p>
           </div>
 
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-              Username <span className="text-red-500">*</span>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Username <span className="text-red-500" aria-label="required">*</span>
             </label>
             <input
               type="text"
@@ -118,10 +140,13 @@ const UserRegistration = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
               placeholder="Choose a username"
+              aria-describedby="username-help"
+              aria-required="true"
               required
             />
+            <p id="username-help" className="text-xs text-gray-500 dark:text-gray-400 mt-1">A unique identifier for your account</p>
           </div>
 
           <div>
@@ -170,6 +195,25 @@ const UserRegistration = () => {
               placeholder="Confirm your password"
               required
             />
+          </div>
+
+          <div>
+            <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
+              Age <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+              placeholder="Enter your age"
+              min="13"
+              max="120"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">You must be at least 13 years old to register</p>
           </div>
 
           <Button

@@ -51,7 +51,7 @@ const PollVotingDetails = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-            <p className="mt-4 text-gray-600">Loading voting details...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading voting details...</p>
           </div>
         </div>
       </div>
@@ -65,7 +65,7 @@ const PollVotingDetails = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card>
             <div className="text-center">
-              <div className="text-red-600 mb-4">{error}</div>
+              <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>
               <Button onClick={() => navigate('/admin/dashboard')} variant="primary">
                 Back to Dashboard
               </Button>
@@ -94,8 +94,8 @@ const PollVotingDetails = () => {
 
         <Card className="mb-6">
           <div className="mb-4">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">{poll.question}</h2>
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">{poll.question}</h2>
+            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
               <span>Created: {formatDate(poll.createdAt)}</span>
               <span>Deadline: {formatDate(poll.deadline)}</span>
               <span className="font-semibold text-indigo-600">Total Votes: {votes.length}</span>

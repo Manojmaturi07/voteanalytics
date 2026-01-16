@@ -157,16 +157,16 @@ const PollVoting = () => {
             </div>
 
             {!expired && (
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4" role="status" aria-label="Time remaining">
-                <p className="text-sm text-blue-800">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3 mb-4" role="status" aria-label="Time remaining">
+                <p className="text-sm text-blue-800 dark:text-blue-300">
                   Deadline: {formatDate(poll.deadline)}
                 </p>
               </div>
             )}
 
             {expired && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
-                <p className="text-sm text-red-800 font-semibold">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3 mb-4">
+                <p className="text-sm text-red-800 dark:text-red-300 font-semibold">
                   This poll has expired. View results below.
                 </p>
               </div>
@@ -174,17 +174,17 @@ const PollVoting = () => {
           </div>
 
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-md">
               {error}
             </div>
           )}
 
           {hasVoted ? (
             <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4 mb-6">
                 <div className="flex items-center">
                   <svg
-                    className="h-5 w-5 text-green-600 mr-2"
+                    className="h-5 w-5 text-green-600 dark:text-green-400 mr-2"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -196,7 +196,7 @@ const PollVoting = () => {
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <p className="text-green-800 font-medium">
+                  <p className="text-green-800 dark:text-green-300 font-medium">
                     Thank you! Your vote has been recorded.
                   </p>
                 </div>
@@ -249,10 +249,10 @@ const PollVoting = () => {
                     key={option.id}
                     onClick={() => handleOptionSelect(option.id)}
                     disabled={expired || submitting}
-                    className={`w-full text-left p-4 border-2 rounded-md transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                    className={`w-full text-left p-4 border-2 rounded-md transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
                       selectedOption === option.id
-                        ? 'border-indigo-600 bg-indigo-50'
-                        : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:border-indigo-500'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                     } ${
                       expired || submitting
                         ? 'opacity-50 cursor-not-allowed'
@@ -266,8 +266,8 @@ const PollVoting = () => {
                       <div
                         className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
                           selectedOption === option.id
-                            ? 'border-indigo-600 bg-indigo-600'
-                            : 'border-gray-300'
+                            ? 'border-indigo-600 dark:border-indigo-400 bg-indigo-600 dark:bg-indigo-500'
+                            : 'border-gray-300 dark:border-gray-600'
                         }`}
                       >
                         {selectedOption === option.id && (
@@ -321,9 +321,9 @@ const PollVoting = () => {
         onClose={handleViewResults}
         title="Vote Submitted Successfully!"
       >
-        <div className="text-center py-4">
+        <div className="text-center py-6 px-2">
           <svg
-            className="mx-auto h-16 w-16 text-green-500 mb-4"
+            className="mx-auto h-20 w-20 text-green-500 dark:text-green-400 mb-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -335,10 +335,13 @@ const PollVoting = () => {
               d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <p className="text-gray-700 mb-6">
-            Your vote has been recorded successfully. You can now view the results.
+          <p className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+            Thank You! 🎉
           </p>
-          <Button variant="primary" onClick={handleViewResults} className="w-full">
+          <p className="text-base text-gray-700 dark:text-gray-100 mb-8 leading-relaxed">
+            Your vote has been recorded successfully. You can now view the results and see how others voted.
+          </p>
+          <Button variant="primary" onClick={handleViewResults} className="w-full py-3 text-base font-semibold">
             View Results
           </Button>
         </div>

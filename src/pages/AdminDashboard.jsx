@@ -9,19 +9,23 @@ import LoadingSpinner from '../components/LoadingSpinner.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { showToast } from '../utils/toastConfig.js';
+import * as bookmarkUtils from '../utils/bookmarkUtils.js';
 
 const AdminDashboard = () => {
   const [polls, setPolls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [sharePoll, setSharePoll] = useState(null);
-  const [deletingPollId, setDeletingPollId] = useState(null);
+  const [deletingPollId, setDeletePollId] = useState(null);
+  const [moderatingPollId, setModeratingPollId] = useState(null);
+  const [bookmarkedPolls, setBookmarkedPolls] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check authentication
     if (!authAPI.isAuthenticated()) {
-      navigate('/login');
+      // Try to load public polls anyway, but show message
+      loadPublicPolls();
       return;
     }
 
@@ -31,20 +35,62 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, [navigate]);
 
+  const loadPublicPolls = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      // Try to load polls anyway
+      const response = await pollsAPI.getAllPolls();
+      const pollsData = Array.isArray(response.data) ? response.data : [];
+      setPolls(pollsData);
+      // Initialize bookmark states
+      const bookmarks = {};
+      pollsData.forEach(poll => {
+        if (poll && poll.id) {
+          bookmarks[poll.id] = bookmarkUtils.isBookmarked(poll.id);
+        }
+      });
+      setBookmarkedPolls(bookmarks);
+    } catch (err) {
+      // Silently fail for public polls - just don't show error to user
+      console.error('Failed to load public polls:', err);
+      setPolls([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loadPolls = async () => {
     try {
       setLoading(true);
       setError('');
       const response = await pollsAPI.getAllPolls();
-      setPolls(response.data);
+      const pollsData = Array.isArray(response.data) ? response.data : [];
+      setPolls(pollsData);
+      // Initialize bookmark states
+      const bookmarks = {};
+      pollsData.forEach(poll => {
+        if (poll && poll.id) {
+          bookmarks[poll.id] = bookmarkUtils.isBookmarked(poll.id);
+        }
+      });
+      setBookmarkedPolls(bookmarks);
     } catch (err) {
       const errorMsg = 'Failed to load polls. Please try again.';
       setError(errorMsg);
-      showToast.error(errorMsg);
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBookmarkToggle = (pollId) => {
+    bookmarkUtils.toggleBookmark(pollId);
+    setBookmarkedPolls(prev => ({
+      ...prev,
+      [pollId]: !prev[pollId]
+    }));
+    showToast.success(bookmarkedPolls[pollId] ? 'Removed from bookmarks' : 'Added to bookmarks');
   };
 
   const handleDeletePoll = async (pollId) => {
@@ -53,7 +99,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      setDeletingPollId(pollId);
+      setDeletePollId(pollId);
       await pollsAPI.deletePoll(pollId);
       setPolls((prev) => prev.filter((p) => p.id !== pollId));
       showToast.success('Poll deleted successfully');
@@ -63,7 +109,30 @@ const AdminDashboard = () => {
       setError(errorMsg);
       showToast.error(errorMsg);
     } finally {
-      setDeletingPollId(null);
+      setDeletePollId(null);
+    }
+  };
+
+  const handleTogglePublish = async (poll) => {
+    try {
+      setModeratingPollId(poll.id);
+      const updatedPoll = {
+        ...poll,
+        isPublished: !poll.isPublished,
+      };
+      await pollsAPI.updatePoll(poll.id, updatedPoll);
+      setPolls((prev) =>
+        prev.map((p) => (p.id === poll.id ? updatedPoll : p))
+      );
+      const message = updatedPoll.isPublished ? 'Poll published' : 'Poll unpublished';
+      showToast.success(message);
+    } catch (err) {
+      console.error(err);
+      const errorMsg = err.message || 'Failed to update poll status';
+      setError(errorMsg);
+      showToast.error(errorMsg);
+    } finally {
+      setModeratingPollId(null);
     }
   };
 
@@ -73,15 +142,22 @@ const AdminDashboard = () => {
 
   const getStatusBadge = (poll) => {
     const expired = isPastDeadline(poll.deadline);
+    if (!poll.isPublished) {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300">
+          Unpublished
+        </span>
+      );
+    }
     if (poll.isLocked || expired) {
       return (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
           Locked
         </span>
       );
     }
     return (
-      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
         Active
       </span>
     );
@@ -89,7 +165,7 @@ const AdminDashboard = () => {
 
   if (loading && polls.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <LoadingSpinner size="lg" text="Loading polls..." ariaLabel="Loading admin polls data" />
@@ -106,48 +182,53 @@ const AdminDashboard = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white" tabIndex={-1}>Admin Dashboard</h1>
             <p className="mt-2 text-gray-600 dark:text-gray-300">Manage and monitor your polls</p>
+            {!authAPI.isAuthenticated() && (
+              <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">📌 Login to access full admin features</p>
+            )}
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-            <Link to="/admin/voting-overview" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full">
-                View All Votes
-              </Button>
-            </Link>
-            <Link to="/admin/users" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full">
-                User Management
-              </Button>
-            </Link>
-            <Link to="/admin/analytics" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full">
-                Analytics
-              </Button>
-            </Link>
-            <Link to="/admin/create-poll" className="w-full sm:w-auto">
-              <Button variant="primary" size="lg" className="w-full">
-                + Create New Poll
-              </Button>
-            </Link>
+            {authAPI.isAuthenticated() && (
+              <>
+                <Link to="/admin/voting-overview" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full">
+                    View All Votes
+                  </Button>
+                </Link>
+                <Link to="/admin/users" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full">
+                    User Management
+                  </Button>
+                </Link>
+                <Link to="/admin/analytics" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full">
+                    Analytics
+                  </Button>
+                </Link>
+                <Link to="/admin/create-poll" className="w-full sm:w-auto">
+                  <Button variant="primary" size="lg" className="w-full">
+                    + Create New Poll
+                  </Button>
+                </Link>
+              </>
+            )}
+            {!authAPI.isAuthenticated() && (
+              <Link to="/login" className="w-full sm:w-auto">
+                <Button variant="primary" size="lg" className="w-full">
+                  Login to Admin
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
-
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md flex items-start" role="alert">
-            <svg className="h-5 w-5 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-            <span>{error}</span>
-          </div>
-        )}
 
         {polls.length === 0 ? (
           <EmptyState
             icon="📊"
-            title="No Polls Created Yet"
-            description="Get started by creating your first poll to gather votes and opinions."
-            actionText="Create Poll"
-            onAction={() => navigate('/admin/create-poll')}
-            ariaLabel="No polls created"
+            title={authAPI.isAuthenticated() ? "No Polls Created Yet" : "No Polls Available"}
+            description={authAPI.isAuthenticated() ? "Get started by creating your first poll to gather votes and opinions." : "Login to create and manage polls."}
+            actionText={authAPI.isAuthenticated() ? "Create Poll" : "Login"}
+            onAction={() => navigate(authAPI.isAuthenticated() ? '/admin/create-poll' : '/login')}
+            ariaLabel={authAPI.isAuthenticated() ? "No polls created" : "Login required"}
           />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -156,6 +237,18 @@ const AdminDashboard = () => {
                 <div className="flex justify-between items-start mb-4">
                   {getStatusBadge(poll)}
                   <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleBookmarkToggle(poll.id)}
+                      className={`p-1 rounded transition-all ${
+                        bookmarkedPolls[poll.id]
+                          ? 'text-yellow-500'
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                      aria-label={bookmarkedPolls[poll.id] ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                      title={bookmarkedPolls[poll.id] ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                    >
+                      {bookmarkedPolls[poll.id] ? '⭐' : '☆'}
+                    </button>
                     <Link
                       to={`/admin/poll/${poll.id}/edit`}
                       className="text-indigo-600 hover:text-indigo-700 flex items-center space-x-1 text-xs font-medium"
@@ -252,6 +345,16 @@ const AdminDashboard = () => {
                         Voting Details
                       </Button>
                     </Link>
+                    {authAPI.isAuthenticated() && (
+                      <Button
+                        variant={poll.isPublished ? "outline" : "primary"}
+                        size="sm"
+                        onClick={() => handleTogglePublish(poll)}
+                        className="flex-1"
+                      >
+                        {poll.isPublished ? 'Unpublish' : 'Publish'}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Card>

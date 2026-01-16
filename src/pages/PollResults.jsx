@@ -18,6 +18,8 @@ import Button from '../components/Button.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { exportToCSV, exportToPDF } from '../utils/exportUtils.js';
 import { showToast } from '../utils/toastConfig.js';
+import Comments from '../components/Comments.jsx';
+import * as bookmarkUtils from '../utils/bookmarkUtils.js';
 
 ChartJS.register(
   CategoryScale,
@@ -36,6 +38,7 @@ const PollResults = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [chartType, setChartType] = useState('bar'); // 'bar' or 'pie'
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
     loadPoll();
@@ -49,6 +52,7 @@ const PollResults = () => {
       setLoading(true);
       const response = await pollsAPI.getPollResults(pollId);
       setPoll(response.data);
+      setIsBookmarked(bookmarkUtils.isBookmarked(pollId));
       setError('');
     } catch (err) {
       setError(err.message || 'Failed to load poll results. Please try again.');
@@ -60,6 +64,12 @@ const PollResults = () => {
   const getTotalVotes = () => {
     if (!poll) return 0;
     return poll.options.reduce((sum, option) => sum + option.votes, 0);
+  };
+
+  const handleBookmarkToggle = () => {
+    bookmarkUtils.toggleBookmark(pollId);
+    setIsBookmarked(!isBookmarked);
+    showToast.success(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks');
   };
 
   const getChartData = () => {
@@ -210,7 +220,19 @@ const PollResults = () => {
                   )}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 items-center">
+                <button
+                  onClick={handleBookmarkToggle}
+                  className={`p-2 rounded-lg transition-all ${
+                    isBookmarked
+                      ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                  aria-label={isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                  title={isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                >
+                  {isBookmarked ? '⭐' : '☆'}
+                </button>
                 <Button
                   variant={chartType === 'bar' ? 'primary' : 'secondary'}
                   size="sm"
@@ -225,49 +247,53 @@ const PollResults = () => {
                 >
                   Pie Chart
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    try {
-                      exportToCSV(poll, pollId);
-                      showToast.success('Results exported as CSV');
-                    } catch (err) {
-                      showToast.error('Failed to export CSV');
-                    }
-                  }}
-                  aria-label="Export results as CSV"
-                >
-                  Export CSV
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={async () => {
-                    try {
-                      await exportToPDF(poll, pollId);
-                      showToast.success('Results exported as PDF');
-                    } catch (err) {
-                      showToast.error('Failed to export PDF');
-                    }
-                  }}
-                  aria-label="Export results as PDF"
-                >
-                  Export PDF
-                </Button>
+                {authAPI.isAdmin() && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        try {
+                          exportToCSV(poll, pollId);
+                          showToast.success('Results exported as CSV');
+                        } catch (err) {
+                          showToast.error('Failed to export CSV');
+                        }
+                      }}
+                      aria-label="Export results as CSV"
+                    >
+                      Export CSV
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          await exportToPDF(poll, pollId);
+                          showToast.success('Results exported as PDF');
+                        } catch (err) {
+                          showToast.error('Failed to export PDF');
+                        }
+                      }}
+                      aria-label="Export results as PDF"
+                    >
+                      Export PDF
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
 
-            <div className="bg-indigo-50 border border-indigo-200 rounded-md p-4 mb-6">
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-md p-4 mb-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-sm text-indigo-800 font-medium">Total Votes</p>
-                  <p className="text-2xl font-bold text-indigo-900">{totalVotes}</p>
+                  <p className="text-sm text-indigo-800 dark:text-indigo-300 font-medium">Total Votes</p>
+                  <p className="text-2xl font-bold text-indigo-900 dark:text-indigo-100">{totalVotes}</p>
                 </div>
                 {!expired && (
                   <div className="text-right">
-                    <p className="text-sm text-indigo-800 font-medium">Time Remaining</p>
-                    <p className="text-lg font-semibold text-indigo-900">
+                    <p className="text-sm text-indigo-800 dark:text-indigo-300 font-medium">Time Remaining</p>
+                    <p className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
                       {getTimeRemaining(poll.deadline)}
                     </p>
                   </div>
@@ -343,21 +369,21 @@ const PollResults = () => {
                               {index + 1}. {option.text}
                             </span>
                             {isWinner && (
-                              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
+                              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-200 dark:bg-green-900/40 text-green-800 dark:text-green-300">
                                 Leading
                               </span>
                             )}
                           </div>
                           <div className="text-right">
-                            <span className="font-bold text-indigo-600">
+                            <span className="font-bold text-indigo-600 dark:text-indigo-400">
                               {option.votes}
                             </span>
-                            <span className="text-gray-600 ml-2">
+                            <span className="text-gray-600 dark:text-gray-400 ml-2">
                               vote{option.votes !== 1 ? 's' : ''} ({percentage}%)
                             </span>
                           </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                           <div
                             className={`h-3 rounded-full transition-all ${
                               isWinner ? 'bg-green-500' : 'bg-indigo-600'
@@ -371,6 +397,12 @@ const PollResults = () => {
               </div>
             </>
           )}
+
+          {/* Comments Section */}
+          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Discussion</h2>
+            <Comments pollId={pollId} />
+          </div>
 
           <div className="mt-8 flex space-x-4">
             <Link to={`/poll/${pollId}`} className="flex-1">

@@ -3,7 +3,10 @@
  * 
  * Client-side validation functions for forms throughout the application.
  * Provides consistent validation rules and error messages.
+ * Includes input sanitization to prevent XSS attacks.
  */
+
+import { sanitizeInput, normalizeInput } from './sanitizer.js';
 
 /**
  * Validates a username
@@ -16,7 +19,9 @@ export const validateUsername = (username) => {
     return { isValid: false, error: 'Username is required' };
   }
 
-  const trimmed = username.trim();
+  // Sanitize input to prevent XSS
+  const sanitized = sanitizeInput(username.trim());
+  const trimmed = normalizeInput(sanitized);
 
   if (trimmed.length < 3) {
     return { isValid: false, error: 'Username must be at least 3 characters long' };
@@ -46,7 +51,9 @@ export const validateEmail = (email) => {
     return { isValid: false, error: 'Email is required' };
   }
 
-  const trimmed = email.trim().toLowerCase();
+  // Sanitize input to prevent XSS
+  const sanitized = sanitizeInput(email.trim()).toLowerCase();
+  const trimmed = normalizeInput(sanitized);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(trimmed)) {
@@ -112,7 +119,9 @@ export const validatePollQuestion = (question) => {
     return { isValid: false, error: 'Poll question is required' };
   }
 
-  const trimmed = question.trim();
+  // Sanitize input to prevent XSS
+  const sanitized = sanitizeInput(question.trim());
+  const trimmed = normalizeInput(sanitized);
 
   if (trimmed.length < 5) {
     return { isValid: false, error: 'Poll question must be at least 5 characters long' };
@@ -153,16 +162,17 @@ export const validatePollOptions = (options, { minOptions = 2, maxOptions = 10 }
     return { isValid: false, error: 'All options must have text' };
   }
 
-  // Check for duplicate options
-  const trimmedOptions = options.map(opt => opt.trim().toLowerCase());
-  const uniqueOptions = new Set(trimmedOptions);
-  if (uniqueOptions.size !== trimmedOptions.length) {
+  // Check for duplicate options (after sanitization)
+  const sanitizedOptions = options.map(opt => normalizeInput(sanitizeInput(opt.trim())).toLowerCase());
+  const uniqueOptions = new Set(sanitizedOptions);
+  if (uniqueOptions.size !== sanitizedOptions.length) {
     return { isValid: false, error: 'Options must be unique' };
   }
 
   // Check option length
   for (let i = 0; i < options.length; i++) {
-    const trimmed = options[i].trim();
+    const sanitized = sanitizeInput(options[i].trim());
+    const trimmed = normalizeInput(sanitized);
     if (trimmed.length < 1) {
       return { isValid: false, error: `Option ${i + 1} cannot be empty` };
     }
@@ -221,7 +231,9 @@ export const validateName = (name, required = true) => {
     return { isValid: true, error: null };
   }
 
-  const trimmed = name.trim();
+  // Sanitize input to prevent XSS
+  const sanitized = sanitizeInput(name.trim());
+  const trimmed = normalizeInput(sanitized);
 
   if (trimmed.length < 2) {
     return { isValid: false, error: 'Name must be at least 2 characters long' };

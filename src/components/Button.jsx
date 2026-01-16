@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
  * Button Component
  * 
  * A reusable button component with multiple variants and sizes.
- * Supports loading states and accessibility features.
+ * Supports loading states and full accessibility features including ARIA support.
  * 
  * @component
  * @param {React.ReactNode} children - Button content
@@ -14,8 +14,10 @@ import PropTypes from 'prop-types';
  * @param {boolean} disabled - Whether button is disabled
  * @param {string} type - Button type: 'button', 'submit', 'reset'
  * @param {string} className - Additional CSS classes
+ * @param {string} ariaLabel - ARIA label for accessibility
+ * @param {string} ariaPressed - ARIA pressed state for toggle buttons
  * @example
- * <Button variant="primary" size="lg" onClick={handleClick}>
+ * <Button variant="primary" size="lg" onClick={handleClick} ariaLabel="Submit form">
  *   Click Me
  * </Button>
  */
@@ -27,10 +29,12 @@ const Button = ({
   disabled = false,
   type = 'button',
   className = '',
+  ariaLabel = '',
+  ariaPressed = '',
   ...props
 }) => {
   const baseStyles =
-    'font-medium rounded-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 touch-manipulation';
+    'font-medium rounded-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 touch-manipulation';
 
   const variants = {
     primary: 'bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:ring-indigo-500 active:bg-indigo-800 dark:active:bg-indigo-700',
@@ -54,6 +58,8 @@ const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={classes}
+      aria-label={ariaLabel}
+      aria-pressed={ariaPressed}
       {...props}
     >
       {children}
@@ -69,6 +75,8 @@ Button.propTypes = {
   disabled: PropTypes.bool,
   type: PropTypes.oneOf(['button', 'submit', 'reset']),
   className: PropTypes.string,
+  ariaLabel: PropTypes.string,
+  ariaPressed: PropTypes.string,
 };
 
 export default Button;

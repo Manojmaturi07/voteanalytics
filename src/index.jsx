@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import './accessibility.css';
 import App from './App.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import reportWebVitals from './reportWebVitals.js';

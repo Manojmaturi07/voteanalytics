@@ -17,6 +17,7 @@ import EditPoll from './pages/EditPoll.jsx';
 import PollVoting from './pages/PollVoting.jsx';
 import PollResults from './pages/PollResults.jsx';
 import PollVotingDetails from './pages/PollVotingDetails.jsx';
+import ConfettiDemo from './pages/ConfettiDemo.jsx';
 import { authAPI } from './services/api.js';
 
 // Protected Route Component for Admin
@@ -59,7 +60,12 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
+        {/* Skip to main content link for keyboard users */}
+        <a href="#main-content" className="skip-to-main" tabIndex="0">
+          Skip to main content
+        </a>
         <ThemedToastContainer />
+        <main id="main-content" tabIndex={-1}>
         <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -142,8 +148,10 @@ function App() {
           element={<PollVoting />}
         />
         <Route path="/results/:pollId" element={<PollResults />} />
+        <Route path="/confetti-demo" element={<ConfettiDemo />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </main>
       </Router>
     </ThemeProvider>
   );

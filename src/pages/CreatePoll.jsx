@@ -13,6 +13,7 @@ const CreatePoll = () => {
     deadline: '',
     category: '',
     tags: '',
+    isAnonymous: false,
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -146,7 +147,7 @@ const CreatePoll = () => {
         <Card>
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md flex items-start" role="alert">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-md flex items-start" role="alert">
                 <svg className="h-5 w-5 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
@@ -155,7 +156,7 @@ const CreatePoll = () => {
             )}
 
             <div>
-              <label htmlFor="question" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="question" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Poll Question <span className="text-red-500" aria-label="required">*</span>
               </label>
               <input
@@ -185,7 +186,7 @@ const CreatePoll = () => {
                       type="text"
                       value={option}
                       onChange={(e) => handleOptionChange(index, e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                       placeholder={`Option ${index + 1}`}
                       aria-label={`Option ${index + 1}`}
                     />
@@ -292,6 +293,23 @@ const CreatePoll = () => {
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 The poll will automatically lock after this date and time
               </p>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <input
+                type="checkbox"
+                id="isAnonymous"
+                checked={formData.isAnonymous}
+                onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
+                className="w-4 h-4 cursor-pointer accent-indigo-600"
+                aria-label="Enable anonymous voting"
+              />
+              <label htmlFor="isAnonymous" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer flex-1">
+                🔒 Anonymous Voting
+                <span className="text-gray-500 dark:text-gray-400 font-normal block text-xs mt-1">
+                  Don't show voter names in results. Voters remain completely anonymous.
+                </span>
+              </label>
             </div>
 
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
