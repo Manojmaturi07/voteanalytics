@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import Card from '../components/Card.jsx';
 import Button from '../components/Button.jsx';
 import Modal from '../components/Modal.jsx';
-import LoadingSpinner from '../components/LoadingSpinner.jsx';
+import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { showToast } from '../utils/toastConfig.js';
@@ -93,6 +93,15 @@ const AdminDashboard = () => {
     showToast.success(bookmarkedPolls[pollId] ? 'Removed from bookmarks' : 'Added to bookmarks');
   };
 
+  const copyPollLink = (pollId) => {
+    const pollUrl = `${window.location.origin}/poll/${pollId}`;
+    navigator.clipboard.writeText(pollUrl).then(() => {
+      showToast.success('Poll link copied to clipboard!');
+    }).catch(() => {
+      showToast.error('Failed to copy link');
+    });
+  };
+
   const handleDeletePoll = async (pollId) => {
     if (!window.confirm('Are you sure you want to delete this poll? This action cannot be undone.')) {
       return;
@@ -168,7 +177,7 @@ const AdminDashboard = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <LoadingSpinner size="lg" text="Loading polls..." ariaLabel="Loading admin polls data" />
+          <LoadingSkeleton variant="card" count={6} ariaLabel="Loading admin polls data" />
         </div>
       </div>
     );
@@ -328,32 +337,46 @@ const AdminDashboard = () => {
                       )}
                     </span>
                   </div>
-                  <div className="flex space-x-2">
-                    <Link
-                      to={`/results/${poll.id}`}
-                      className="flex-1"
-                    >
-                      <Button variant="outline" size="sm" className="w-full">
-                        Results
-                      </Button>
-                    </Link>
-                    <Link
-                      to={`/admin/poll/${poll.id}/votes`}
-                      className="flex-1"
-                    >
-                      <Button variant="primary" size="sm" className="w-full">
-                        Voting Details
-                      </Button>
-                    </Link>
-                    {authAPI.isAuthenticated() && (
-                      <Button
-                        variant={poll.isPublished ? "outline" : "primary"}
-                        size="sm"
-                        onClick={() => handleTogglePublish(poll)}
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/results/${poll.id}`}
                         className="flex-1"
                       >
-                        {poll.isPublished ? 'Unpublish' : 'Publish'}
-                      </Button>
+                        <Button variant="outline" size="sm" className="w-full">
+                          Results
+                        </Button>
+                      </Link>
+                      <Link
+                        to={`/admin/poll/${poll.id}/votes`}
+                        className="flex-1"
+                      >
+                        <Button variant="primary" size="sm" className="w-full">
+                          Voting Details
+                        </Button>
+                      </Link>
+                    </div>
+                    {authAPI.isAuthenticated() && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant={poll.isPublished ? "outline" : "primary"}
+                          size="sm"
+                          onClick={() => handleTogglePublish(poll)}
+                          className="flex-1"
+                        >
+                          {poll.isPublished ? 'Unpublish' : 'Publish'}
+                        </Button>
+                        <button
+                          onClick={() => copyPollLink(poll.id)}
+                          className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          aria-label={`Copy link to poll: ${poll.question}`}
+                          title="Copy poll link"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>

@@ -15,6 +15,7 @@ import { Bar, Pie } from 'react-chartjs-2';
 import Navbar from '../components/Navbar.jsx';
 import Card from '../components/Card.jsx';
 import Button from '../components/Button.jsx';
+import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { exportToCSV, exportToPDF } from '../utils/exportUtils.js';
 import { showToast } from '../utils/toastConfig.js';
@@ -168,10 +169,7 @@ const PollResults = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={authAPI.isAdmin()} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading results...</p>
-          </div>
+          <LoadingSkeleton variant="poll-list" count={4} ariaLabel="Loading poll results" />
         </div>
       </div>
     );

@@ -4,7 +4,7 @@ import { pollsAPI, authAPI } from '../services/api.js';
 import Navbar from '../components/Navbar.jsx';
 import Card from '../components/Card.jsx';
 import Button from '../components/Button.jsx';
-import LoadingSpinner from '../components/LoadingSpinner.jsx';
+import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { showToast } from '../utils/toastConfig.js';
@@ -16,6 +16,7 @@ const UserPolls = () => {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedDateFilter, setSelectedDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pollsPerPage] = useState(9); // 3x3 grid
   const navigate = useNavigate();
@@ -74,9 +75,33 @@ const UserPolls = () => {
       );
     }
 
+    // Filter by date
+    if (selectedDateFilter) {
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekAgo = new Date(todayStart.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(todayStart.getFullYear(), todayStart.getMonth() - 1, todayStart.getDate());
+
+      filtered = filtered.filter(poll => {
+        const pollDate = new Date(poll.createdAt);
+        const pollDateStart = new Date(pollDate.getFullYear(), pollDate.getMonth(), pollDate.getDate());
+
+        switch (selectedDateFilter) {
+          case 'today':
+            return pollDateStart.getTime() === todayStart.getTime();
+          case 'week':
+            return pollDate >= weekAgo;
+          case 'month':
+            return pollDate >= monthAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
     setFilteredPolls(filtered);
     setCurrentPage(1); // Reset to first page when filters change
-  }, [searchQuery, selectedCategory, polls]);
+  }, [searchQuery, selectedCategory, selectedDateFilter, polls]);
 
   // Get unique categories from polls
   const categories = [...new Set(polls.map(poll => poll.category).filter(Boolean))];
@@ -95,12 +120,25 @@ const UserPolls = () => {
     return pollsAPI.hasVoted(pollId);
   };
 
+  const copyPollLink = (pollId) => {
+    const pollUrl = `${window.location.origin}/poll/${pollId}`;
+    navigator.clipboard.writeText(pollUrl).then(() => {
+      showToast.success('Poll link copied to clipboard!');
+    }).catch(() => {
+      showToast.error('Failed to copy link');
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <LoadingSpinner size="lg" text="Loading polls..." ariaLabel="Loading available polls" />
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Available Polls</h1>
+            <p className="text-gray-600 dark:text-gray-400">Vote on active polls and participate in decision-making</p>
+          </div>
+          <LoadingSkeleton variant="card" count={6} ariaLabel="Loading available polls" />
         </div>
       </div>
     );
@@ -137,6 +175,23 @@ const UserPolls = () => {
                   aria-label="Search polls"
                 />
               </div>
+            </div>
+
+            {/* Date Filter */}
+            <div className="sm:w-40">
+              <label htmlFor="date-filter" className="sr-only">Filter by date</label>
+              <select
+                id="date-filter"
+                value={selectedDateFilter}
+                onChange={(e) => setSelectedDateFilter(e.target.value)}
+                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                aria-label="Filter by date"
+              >
+                <option value="">All Dates</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
             </div>
 
             {/* Category Filter */}
@@ -259,28 +314,43 @@ const UserPolls = () => {
                   </div>
 
                   <div className="border-t pt-4 mt-4">
-                    <div className="flex space-x-2">
-                      {voted ? (
-                        <Link
-                          to={`/results/${poll.id}`}
-                          className="flex-1"
-                          aria-label={`View results for poll: ${poll.question}`}
-                        >
-                          <Button variant="primary" size="sm" className="w-full">
-                            View Results
-                          </Button>
-                        </Link>
-                      ) : (
-                        <Link
-                          to={`/poll/${poll.id}`}
-                          className="flex-1"
-                          aria-label={`Vote on poll: ${poll.question}`}
-                        >
-                          <Button variant="secondary" size="sm" className="w-full">
-                            Vote Now
-                          </Button>
-                        </Link>
-                      )}
+                    <div className="flex flex-col gap-2">
+                      {/* Main action button */}
+                      <div className="flex space-x-2">
+                        {voted ? (
+                          <Link
+                            to={`/results/${poll.id}`}
+                            className="flex-1"
+                            aria-label={`View results for poll: ${poll.question}`}
+                          >
+                            <Button variant="primary" size="sm" className="w-full">
+                              View Results
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Link
+                            to={`/poll/${poll.id}`}
+                            className="flex-1"
+                            aria-label={`Vote on poll: ${poll.question}`}
+                          >
+                            <Button variant="secondary" size="sm" className="w-full">
+                              Vote Now
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+
+                      {/* Copy link button */}
+                      <button
+                        onClick={() => copyPollLink(poll.id)}
+                        className="flex items-center justify-center gap-2 w-full px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        aria-label={`Copy link to poll: ${poll.question}`}
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        Share
+                      </button>
                     </div>
                   </div>
                 </Card>

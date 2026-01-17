@@ -99,6 +99,14 @@ const Navbar = ({ isAdmin = false }) => {
                     >
                       Profile
                     </Link>
+                    <Link
+                      to="/settings/security"
+                      className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      aria-label="Security settings"
+                      title="Security & Privacy Settings"
+                    >
+                      🔒
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-2 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 active:bg-red-700"

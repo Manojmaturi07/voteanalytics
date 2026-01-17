@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import Card from '../components/Card.jsx';
 import Button from '../components/Button.jsx';
 import Modal from '../components/Modal.jsx';
-import LoadingSpinner from '../components/LoadingSpinner.jsx';
+import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { showToast } from '../utils/toastConfig.js';
 import { triggerBurstConfetti } from '../utils/confettiUtils.js';
@@ -111,7 +111,7 @@ const PollVoting = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <LoadingSpinner size="lg" text="Loading poll..." ariaLabel="Loading poll data" />
+          <LoadingSkeleton variant="poll-list" count={5} ariaLabel="Loading poll data" />
         </div>
       </div>
     );

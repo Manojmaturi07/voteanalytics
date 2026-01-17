@@ -4,7 +4,7 @@ import { pollsAPI, authAPI } from '../services/api.js';
 import Navbar from '../components/Navbar.jsx';
 import Card from '../components/Card.jsx';
 import Button from '../components/Button.jsx';
-import LoadingSpinner from '../components/LoadingSpinner.jsx';
+import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import { showToast } from '../utils/toastConfig.js';
 
 const EditPoll = () => {
@@ -157,7 +157,7 @@ const EditPoll = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar isAdmin={true} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <LoadingSpinner size="lg" text="Loading poll..." ariaLabel="Loading poll data" />
+          <LoadingSkeleton variant="poll-list" count={5} ariaLabel="Loading poll data" />
         </div>
       </div>
     );

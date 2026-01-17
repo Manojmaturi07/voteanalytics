@@ -18,6 +18,10 @@ import PollVoting from './pages/PollVoting.jsx';
 import PollResults from './pages/PollResults.jsx';
 import PollVotingDetails from './pages/PollVotingDetails.jsx';
 import ConfettiDemo from './pages/ConfettiDemo.jsx';
+import EmailVerification from './pages/EmailVerification.jsx';
+import TwoFactorSetup from './pages/TwoFactorSetup.jsx';
+import SecuritySettings from './pages/SecuritySettings.jsx';
+import SessionTimeoutManager from './components/SessionTimeoutManager.jsx';
 import { authAPI } from './services/api.js';
 
 // Protected Route Component for Admin
@@ -65,8 +69,9 @@ function App() {
           Skip to main content
         </a>
         <ThemedToastContainer />
-        <main id="main-content" tabIndex={-1}>
-        <Routes>
+        <SessionTimeoutManager>
+          <main id="main-content" tabIndex={-1}>
+            <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<UserRegistration />} />
@@ -149,9 +154,20 @@ function App() {
         />
         <Route path="/results/:pollId" element={<PollResults />} />
         <Route path="/confetti-demo" element={<ConfettiDemo />} />
+        <Route path="/verify-email/:token" element={<EmailVerification />} />
+        <Route path="/2fa-setup" element={<TwoFactorSetup />} />
+        <Route
+          path="/settings/security"
+          element={
+            <UserProtectedRoute>
+              <SecuritySettings />
+            </UserProtectedRoute>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </main>
+          </main>
+        </SessionTimeoutManager>
       </Router>
     </ThemeProvider>
   );
