@@ -216,12 +216,68 @@ const UserPolls = () => {
             )}
           </div>
 
-          {/* Results count */}
-          {filteredPolls.length !== polls.length && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {filteredPolls.length} of {polls.length} polls
-            </p>
-          )}
+          {/* Active Filters and Results count */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-2">
+              {(searchQuery || selectedCategory || selectedDateFilter) && (
+                <>
+                  <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Active filters:</span>
+                  {searchQuery && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
+                      Search: "{searchQuery}"
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="ml-1 hover:font-bold focus:outline-none"
+                        aria-label={`Clear search filter: ${searchQuery}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {selectedCategory && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full">
+                      {selectedCategory}
+                      <button
+                        onClick={() => setSelectedCategory('')}
+                        className="ml-1 hover:font-bold focus:outline-none"
+                        aria-label={`Clear category filter: ${selectedCategory}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {selectedDateFilter && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
+                      {selectedDateFilter}
+                      <button
+                        onClick={() => setSelectedDateFilter('')}
+                        className="ml-1 hover:font-bold focus:outline-none"
+                        aria-label={`Clear date filter: ${selectedDateFilter}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('');
+                      setSelectedDateFilter('');
+                    }}
+                    className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium underline ml-2"
+                    aria-label="Clear all filters"
+                  >
+                    Clear All
+                  </button>
+                </>
+              )}
+            </div>
+            {filteredPolls.length !== polls.length && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                Showing {filteredPolls.length} of {polls.length} polls
+              </p>
+            )}
+          </div>
         </div>
 
         {error && (

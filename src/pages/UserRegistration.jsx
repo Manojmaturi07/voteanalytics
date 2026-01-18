@@ -15,13 +15,70 @@ const UserRegistration = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
 
+  const getPasswordStrength = (password) => {
+    if (!password) return { strength: 0, label: 'No password' };
+    if (password.length < 6) return { strength: 1, label: 'Too short' };
+    
+    let strength = 1;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+    
+    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    const colors = ['', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
+    
+    return { 
+      strength: Math.min(strength, 4), 
+      label: labels[Math.min(strength, 4)],
+      color: colors[Math.min(strength, 4)]
+    };
+  };
+
+  const validateField = (name, value) => {
+    const errors = {};
+    
+    switch (name) {
+      case 'email':
+        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errors.email = 'Invalid email address';
+        }
+        break;
+      case 'password':
+        if (value.length < 6 && value.length > 0) {
+          errors.password = 'Password must be at least 6 characters';
+        }
+        break;
+      case 'age':
+        const age = parseInt(value, 10);
+        if (value && (isNaN(age) || age < 13)) {
+          errors.age = 'Must be at least 13 years old';
+        } else if (age > 120) {
+          errors.age = 'Please enter a valid age';
+        }
+        break;
+      default:
+        break;
+    }
+    
+    return errors;
+  };
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    
+    const errors = validateField(name, value);
+    setFieldErrors(prev => ({
+      ...prev,
+      ...errors,
+      [name]: errors[name] || ''
+    }));
     setError('');
   };
 
@@ -150,8 +207,8 @@ const UserRegistration = () => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email <span className="text-red-500">*</span>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Email <span className="text-red-500" aria-label="required">*</span>
             </label>
             <input
               type="email"
@@ -159,15 +216,24 @@ const UserRegistration = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+              className={`w-full px-4 py-2 border rounded-md dark:bg-gray-700 dark:text-white outline-none transition ${ 
+                fieldErrors.email 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+              } focus:ring-2 focus:border-transparent`}
               placeholder="Enter your email"
+              aria-describedby={fieldErrors.email ? "email-error" : ""}
+              aria-required="true"
               required
             />
+            {fieldErrors.email && (
+              <p id="email-error" className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password <span className="text-red-500">*</span>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Password <span className="text-red-500" aria-label="required">*</span>
             </label>
             <input
               type="password"
@@ -175,10 +241,38 @@ const UserRegistration = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+              className={`w-full px-4 py-2 border rounded-md outline-none transition ${ 
+                fieldErrors.password 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+              } dark:bg-gray-700 dark:text-white focus:ring-2 focus:border-transparent`}
               placeholder="Enter password (min. 6 characters)"
+              aria-describedby="password-strength"
+              aria-required="true"
               required
             />
+            {formData.password && (
+              <div className="mt-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full transition-all ${getPasswordStrength(formData.password).color}`}
+                      style={{width: `${(getPasswordStrength(formData.password).strength / 4) * 100}%`}}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <span id="password-strength" className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                    {getPasswordStrength(formData.password).label}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Use uppercase, lowercase, numbers, and symbols for stronger passwords
+                </p>
+              </div>
+            )}
+            {fieldErrors.password && (
+              <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+            )}
           </div>
 
           <div>
@@ -198,8 +292,8 @@ const UserRegistration = () => {
           </div>
 
           <div>
-            <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
-              Age <span className="text-red-500">*</span>
+            <label htmlFor="age" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Age <span className="text-red-500" aria-label="required">*</span>
             </label>
             <input
               type="number"
@@ -207,13 +301,24 @@ const UserRegistration = () => {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+              className={`w-full px-4 py-2 border rounded-md dark:bg-gray-700 dark:text-white outline-none transition ${ 
+                fieldErrors.age 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+              } focus:ring-2 focus:border-transparent`}
               placeholder="Enter your age"
               min="13"
               max="120"
+              aria-describedby={fieldErrors.age ? "age-error" : "age-help"}
+              aria-required="true"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">You must be at least 13 years old to register</p>
+            {fieldErrors.age && (
+              <p id="age-error" className="text-xs text-red-500 mt-1">{fieldErrors.age}</p>
+            )}
+            {!fieldErrors.age && (
+              <p id="age-help" className="text-xs text-gray-500 dark:text-gray-400 mt-1">You must be at least 13 years old to register</p>
+            )}
           </div>
 
           <Button

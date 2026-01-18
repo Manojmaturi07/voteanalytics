@@ -9,6 +9,7 @@ import LoadingSkeleton from '../components/LoadingSkeleton.jsx';
 import { formatDate, getTimeRemaining, isPastDeadline } from '../utils/helpers.js';
 import { showToast } from '../utils/toastConfig.js';
 import { triggerBurstConfetti } from '../utils/confettiUtils.js';
+import { isBookmarked, toggleBookmark } from '../utils/bookmarkUtils.js';
 
 const PollVoting = () => {
   const { pollId } = useParams();
@@ -20,6 +21,7 @@ const PollVoting = () => {
   const [error, setError] = useState('');
   const [hasVoted, setHasVoted] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isBookmarkedPoll, setIsBookmarkedPoll] = useState(false);
 
   useEffect(() => {
     // Load poll data when component mounts or pollId changes
@@ -38,6 +40,9 @@ const PollVoting = () => {
       // Check if user has already voted
       const voted = pollsAPI.hasVoted(pollId);
       setHasVoted(voted);
+
+      // Check if poll is bookmarked
+      setIsBookmarkedPoll(isBookmarked(pollId));
 
       // Check if poll is locked or expired
       if (pollData.isLocked || isPastDeadline(pollData.deadline)) {
@@ -58,6 +63,12 @@ const PollVoting = () => {
     if (!hasVoted && !submitting) {
       setSelectedOption(optionId);
     }
+  };
+
+  const handleBookmarkToggle = () => {
+    toggleBookmark(pollId);
+    setIsBookmarkedPoll(!isBookmarkedPoll);
+    showToast.success(isBookmarkedPoll ? 'Removed from bookmarks' : 'Added to bookmarks');
   };
 
   const handleSubmitVote = async () => {
@@ -146,7 +157,7 @@ const PollVoting = () => {
         <Card>
           <div className="mb-6">
             <div className="flex justify-between items-start mb-4">
-              <div>
+              <div className="flex-1">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" tabIndex={-1}>
                   {poll.question}
                 </h1>
@@ -154,6 +165,31 @@ const PollVoting = () => {
                   Deadline: {formatDate(poll.deadline)}
                 </p>
               </div>
+              <button
+                onClick={handleBookmarkToggle}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ml-4 ${
+                  isBookmarkedPoll
+                    ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+                title={isBookmarkedPoll ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                aria-label={isBookmarkedPoll ? 'Remove from bookmarks' : 'Add to bookmarks'}
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill={isBookmarkedPoll ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 5a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 19V5z"
+                  />
+                </svg>
+                <span className="text-sm font-medium">{isBookmarkedPoll ? 'Bookmarked' : 'Bookmark'}</span>
+              </button>
             </div>
 
             {!expired && (

@@ -3,7 +3,7 @@
  * Manage user bookmarked polls using localStorage
  */
 
-export const bookmarkUtils = {
+const bookmarkUtilsObj = {
   /**
    * Add a poll to bookmarks
    * @param {string} pollId - Poll ID to bookmark
@@ -68,12 +68,12 @@ export const bookmarkUtils = {
    * @returns {boolean} New bookmark status
    */
   toggleBookmark: (pollId) => {
-    const isBookmarked = bookmarkUtils.isBookmarked(pollId);
+    const isBookmarked = bookmarkUtilsObj.isBookmarked(pollId);
     if (isBookmarked) {
-      bookmarkUtils.removeBookmark(pollId);
+      bookmarkUtilsObj.removeBookmark(pollId);
       return false;
     } else {
-      bookmarkUtils.addBookmark(pollId);
+      bookmarkUtilsObj.addBookmark(pollId);
       return true;
     }
   },
@@ -94,8 +94,20 @@ export const bookmarkUtils = {
    * @returns {number} Number of bookmarks
    */
   getBookmarkCount: () => {
-    return bookmarkUtils.getBookmarks().length;
+    return bookmarkUtilsObj.getBookmarks().length;
   },
 };
+
+// Export individual functions for easier importing
+export const addBookmark = bookmarkUtilsObj.addBookmark;
+export const removeBookmark = bookmarkUtilsObj.removeBookmark;
+export const isBookmarked = bookmarkUtilsObj.isBookmarked;
+export const getBookmarks = bookmarkUtilsObj.getBookmarks;
+export const toggleBookmark = bookmarkUtilsObj.toggleBookmark;
+export const clearAllBookmarks = bookmarkUtilsObj.clearAllBookmarks;
+export const getBookmarkCount = bookmarkUtilsObj.getBookmarkCount;
+
+// Also export as object for backward compatibility
+export const bookmarkUtils = bookmarkUtilsObj;
 
 export default bookmarkUtils;
