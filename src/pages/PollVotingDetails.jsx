@@ -28,6 +28,15 @@ const PollVotingDetails = () => {
     try {
       setLoading(true);
       const pollResponse = await pollsAPI.getPollById(pollId);
+      const currentAdmin = authAPI.getCurrentAdmin();
+      const pollOwner = pollResponse.data.createdBy || '3';
+
+      if (currentAdmin && currentAdmin.id !== pollOwner) {
+        setError('Unauthorized: You can only view details for polls you created.');
+        showToast.error('You do not have permission to view this poll');
+        return;
+      }
+
       const votesResponse = await pollsAPI.getPollVotingDetails(pollId);
       
       setPoll(pollResponse.data);

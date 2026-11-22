@@ -12,7 +12,16 @@ export default defineConfig({
     host: true
   },
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          charts: ['chart.js', 'react-chartjs-2'],
+          pdf: ['jspdf'],
+        },
+      },
+    },
   },
   esbuild: {
     logOverride: { 'this-is-undefined-in-esm': 'silent' }

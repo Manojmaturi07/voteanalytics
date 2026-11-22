@@ -18,6 +18,11 @@
  * @returns {string} Verification token (32 characters)
  */
 export const generateVerificationToken = () => {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  }
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let token = '';
   for (let i = 0; i < 32; i++) {
@@ -32,6 +37,11 @@ export const generateVerificationToken = () => {
  */
 export const generate2FASecret = () => {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => charset[byte % charset.length]).join('');
+  }
   let secret = '';
   for (let i = 0; i < 32; i++) {
     secret += charset.charAt(Math.floor(Math.random() * charset.length));

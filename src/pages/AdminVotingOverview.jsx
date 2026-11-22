@@ -27,7 +27,7 @@ const AdminVotingOverview = () => {
   const loadAllData = async () => {
     try {
       setLoading(true);
-      const pollsResponse = await pollsAPI.getAllPolls();
+      const pollsResponse = await pollsAPI.getAdminPolls();
       setPolls(pollsResponse.data);
 
       // Load votes for all polls

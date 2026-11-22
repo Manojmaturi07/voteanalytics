@@ -1,28 +1,31 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx';
-import Home from './pages/Home.jsx';
-import Login from './pages/Login.jsx';
-import UserRegistration from './pages/UserRegistration.jsx';
-import AdminRegistration from './pages/AdminRegistration.jsx';
-import UserPolls from './pages/UserPolls.jsx';
-import UserProfile from './pages/UserProfile.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
-import AdminVotingOverview from './pages/AdminVotingOverview.jsx';
-import AdminUserManagement from './pages/AdminUserManagement.jsx';
-import AdminAnalytics from './pages/AdminAnalytics.jsx';
-import CreatePoll from './pages/CreatePoll.jsx';
-import EditPoll from './pages/EditPoll.jsx';
-import PollVoting from './pages/PollVoting.jsx';
-import PollResults from './pages/PollResults.jsx';
-import PollVotingDetails from './pages/PollVotingDetails.jsx';
-import ConfettiDemo from './pages/ConfettiDemo.jsx';
-import EmailVerification from './pages/EmailVerification.jsx';
-import TwoFactorSetup from './pages/TwoFactorSetup.jsx';
-import SecuritySettings from './pages/SecuritySettings.jsx';
+import LoadingSpinner from './components/LoadingSpinner.jsx';
 import SessionTimeoutManager from './components/SessionTimeoutManager.jsx';
 import { authAPI } from './services/api.js';
+
+const Home = lazy(() => import('./pages/Home.jsx'));
+const Login = lazy(() => import('./pages/Login.jsx'));
+const UserRegistration = lazy(() => import('./pages/UserRegistration.jsx'));
+const AdminRegistration = lazy(() => import('./pages/AdminRegistration.jsx'));
+const UserPolls = lazy(() => import('./pages/UserPolls.jsx'));
+const UserProfile = lazy(() => import('./pages/UserProfile.jsx'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'));
+const AdminVotingOverview = lazy(() => import('./pages/AdminVotingOverview.jsx'));
+const AdminUserManagement = lazy(() => import('./pages/AdminUserManagement.jsx'));
+const AdminAnalytics = lazy(() => import('./pages/AdminAnalytics.jsx'));
+const CreatePoll = lazy(() => import('./pages/CreatePoll.jsx'));
+const EditPoll = lazy(() => import('./pages/EditPoll.jsx'));
+const PollVoting = lazy(() => import('./pages/PollVoting.jsx'));
+const PollResults = lazy(() => import('./pages/PollResults.jsx'));
+const PollVotingDetails = lazy(() => import('./pages/PollVotingDetails.jsx'));
+const ConfettiDemo = lazy(() => import('./pages/ConfettiDemo.jsx'));
+const EmailVerification = lazy(() => import('./pages/EmailVerification.jsx'));
+const TwoFactorSetup = lazy(() => import('./pages/TwoFactorSetup.jsx'));
+const SecuritySettings = lazy(() => import('./pages/SecuritySettings.jsx'));
 
 // Protected Route Component for Admin
 const AdminProtectedRoute = ({ children }) => {
@@ -71,7 +74,12 @@ function App() {
         <ThemedToastContainer />
         <SessionTimeoutManager>
           <main id="main-content" tabIndex={-1}>
-            <Routes>
+            <Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <LoadingSpinner size="lg" text="Loading..." />
+              </div>
+            }>
+              <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<UserRegistration />} />
@@ -165,7 +173,8 @@ function App() {
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+              </Routes>
+            </Suspense>
           </main>
         </SessionTimeoutManager>
       </Router>

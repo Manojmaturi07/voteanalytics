@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import Card from '../components/Card.jsx';
 import Button from '../components/Button.jsx';
 import { showToast } from '../utils/toastConfig.js';
+import { getAllUserEmails, notifyNewPoll } from '../services/emailService.js';
 
 const CreatePoll = () => {
   const [formData, setFormData] = useState({

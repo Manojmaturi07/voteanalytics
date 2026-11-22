@@ -26,10 +26,11 @@ const SecuritySettings = () => {
   const [deletePassword, setDeletePassword] = useState('');
   const [deletionReason, setDeletionReason] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const currentUser = authAPI.getCurrentUser() || authAPI.getCurrentAdmin();
   const [user] = useState({
-    id: '1',
-    username: 'john_doe',
-    email: 'john@example.com',
+    id: currentUser?.id || '1',
+    username: currentUser?.username || 'user',
+    email: currentUser?.email || 'user@example.com',
     twoFactorEnabled: false,
   });
 

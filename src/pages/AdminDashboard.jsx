@@ -23,9 +23,8 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Check authentication
-    if (!authAPI.isAuthenticated()) {
-      // Try to load public polls anyway, but show message
-      loadPublicPolls();
+    if (!authAPI.isAdmin()) {
+      navigate('/login?type=admin');
       return;
     }
 
@@ -35,36 +34,11 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, [navigate]);
 
-  const loadPublicPolls = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      // Try to load polls anyway
-      const response = await pollsAPI.getAllPolls();
-      const pollsData = Array.isArray(response.data) ? response.data : [];
-      setPolls(pollsData);
-      // Initialize bookmark states
-      const bookmarks = {};
-      pollsData.forEach(poll => {
-        if (poll && poll.id) {
-          bookmarks[poll.id] = bookmarkUtils.isBookmarked(poll.id);
-        }
-      });
-      setBookmarkedPolls(bookmarks);
-    } catch (err) {
-      // Silently fail for public polls - just don't show error to user
-      console.error('Failed to load public polls:', err);
-      setPolls([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loadPolls = async () => {
     try {
       setLoading(true);
       setError('');
-      const response = await pollsAPI.getAllPolls();
+      const response = await pollsAPI.getAdminPolls();
       const pollsData = Array.isArray(response.data) ? response.data : [];
       setPolls(pollsData);
       // Initialize bookmark states
@@ -190,10 +164,9 @@ const AdminDashboard = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white" tabIndex={-1}>Admin Dashboard</h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">Manage and monitor your polls</p>
-            {!authAPI.isAuthenticated() && (
-              <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">📌 Login to access full admin features</p>
-            )}
+            <p className="mt-2 text-gray-600 dark:text-gray-300">
+              Manage and monitor your polls {authAPI.getCurrentAdmin()?.name ? `(${authAPI.getCurrentAdmin().name})` : ''}
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
             {authAPI.isAuthenticated() && (

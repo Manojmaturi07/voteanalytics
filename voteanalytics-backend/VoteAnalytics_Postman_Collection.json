@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "VoteAnalytics API",
+    "description": "Production REST API collection for VoteAnalytics Spring Boot backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "User Registration",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"new_voter\",\n  \"email\": \"voter@example.com\",\n  \"password\": \"User@123\",\n  \"name\": \"New Voter\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"]}
+          }
+        },
+        {
+          "name": "Admin Registration",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"new_admin\",\n  \"email\": \"admin2@example.com\",\n  \"password\": \"Admin@123\",\n  \"name\": \"Admin Two\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/admin/register", "host": ["{{baseUrl}}"], "path": ["auth", "admin", "register"]}
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"]}
+          }
+        },
+        {
+          "name": "Login (User)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"user123\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"]}
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Polls",
+      "item": [
+        {
+          "name": "Get Public Polls (Voter View)",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/polls", "host": ["{{baseUrl}}"], "path": ["polls"]}
+          }
+        },
+        {
+          "name": "Get Admin My Polls (Admin Scoped)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/polls/admin/my-polls", "host": ["{{baseUrl}}"], "path": ["polls", "admin", "my-polls"]}
+          }
+        },
+        {
+          "name": "Create Poll (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Which cloud platform do you prefer?\",\n  \"options\": [\"AWS\", \"Google Cloud\", \"Azure\"],\n  \"deadline\": \"2026-12-31T23:59:59\",\n  \"category\": \"Cloud\",\n  \"tags\": [\"cloud\", \"devops\"]\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/polls", "host": ["{{baseUrl}}"], "path": ["polls"]}
+          }
+        },
+        {
+          "name": "Get Poll Results",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/polls/1/results", "host": ["{{baseUrl}}"], "path": ["polls", "1", "results"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voting",
+      "item": [
+        {
+          "name": "Cast Vote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"optionId\": 1\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/polls/1/vote", "host": ["{{baseUrl}}"], "path": ["polls", "1", "vote"]}
+          }
+        },
+        {
+          "name": "Check Has Voted",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/polls/1/has-voted", "host": ["{{baseUrl}}"], "path": ["polls", "1", "has-voted"]}
+          }
+        },
+        {
+          "name": "Get Voting Details (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/polls/1/voting-details", "host": ["{{baseUrl}}"], "path": ["polls", "1", "voting-details"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Analytics",
+      "item": [
+        {
+          "name": "Overview Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/admin/analytics/overview", "host": ["{{baseUrl}}"], "path": ["admin", "analytics", "overview"]}
+          }
+        },
+        {
+          "name": "Popular Polls",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/admin/analytics/popular-polls", "host": ["{{baseUrl}}"], "path": ["admin", "analytics", "popular-polls"]}
+          }
+        },
+        {
+          "name": "Category Distribution",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/admin/analytics/category-distribution", "host": ["{{baseUrl}}"], "path": ["admin", "analytics", "category-distribution"]}
+          }
+        }
+      ]
+    }
+  ]
+}

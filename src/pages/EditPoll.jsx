@@ -34,6 +34,14 @@ const EditPoll = () => {
       setLoading(true);
       const response = await pollsAPI.getPollById(pollId);
       const poll = response.data;
+      const currentAdmin = authAPI.getCurrentAdmin();
+      const pollOwner = poll.createdBy || '3';
+
+      if (currentAdmin && currentAdmin.id !== pollOwner) {
+        showToast.error('You do not have permission to edit this poll');
+        navigate('/admin/dashboard');
+        return;
+      }
 
       setFormData({
         question: poll.question || '',

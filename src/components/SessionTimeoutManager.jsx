@@ -99,7 +99,7 @@ const SessionTimeoutManager = ({ children }) => {
 
   const handleSessionTimeout = () => {
     setSession(null);
-    localStorage.removeItem(SESSION_CONFIG.STORAGE_KEY);
+    authAPI.logout();
     showToast.warning('Your session has expired. Please log in again.');
     navigate('/login');
   };

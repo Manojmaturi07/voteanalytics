@@ -53,7 +53,7 @@ const AdminAnalytics = () => {
       
       // Load polls and users
       const [pollsResponse, usersResponse] = await Promise.all([
-        pollsAPI.getAllPolls(),
+        pollsAPI.getAdminPolls(),
         usersAPI.getAllUsers().catch(() => ({ data: [] })), // Gracefully handle if usersAPI fails
       ]);
 

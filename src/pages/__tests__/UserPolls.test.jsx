@@ -8,6 +8,7 @@ import { pollsAPI, authAPI } from '../../services/api.js';
 vi.mock('../../services/api.js', () => ({
   pollsAPI: {
     getAllPolls: vi.fn(),
+    hasVoted: vi.fn(() => false),
   },
   authAPI: {
     isUser: vi.fn(() => true),
@@ -36,8 +37,8 @@ describe('UserPolls Component', () => {
 
     renderWithRouter(<UserPolls />);
     
-    // Should show loading state
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    // Should show loading skeleton
+    expect(screen.getAllByRole('status', { name: /loading available polls/i }).length).toBeGreaterThan(0);
   });
 
   it('renders empty state when no polls', async () => {
@@ -46,7 +47,7 @@ describe('UserPolls Component', () => {
     renderWithRouter(<UserPolls />);
     
     await waitFor(() => {
-      expect(screen.getByText(/no polls available/i)).toBeInTheDocument();
+      expect(screen.getByText(/no active polls available/i)).toBeInTheDocument();
     });
   });
 

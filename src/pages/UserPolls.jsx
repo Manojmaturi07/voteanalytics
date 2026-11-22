@@ -316,17 +316,6 @@ const UserPolls = () => {
               return (
                 <Card key={poll.id} className="hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      Active
-                    </span>
-                    {voted && (
-                      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                        Voted
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex justify-between items-start mb-4">
                     <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200" aria-label="Poll is active">
                       Active
                     </span>
