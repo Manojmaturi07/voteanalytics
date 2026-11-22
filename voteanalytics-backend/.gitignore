@@ -1,0 +1,43 @@
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# Database & local runtime files
+data/
+*.db
+*.mv.db
+*.trace.db
+
+# IDE and editor settings
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+bin/

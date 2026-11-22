@@ -22,3 +22,22 @@ yarn-error.log*
 
 # Vite
 .vite
+
+# Java / Maven build artifacts
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+voteanalytics-backend/data/
+voteanalytics-backend/target/
+
+# IDE Files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
